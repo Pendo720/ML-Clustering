@@ -68,7 +68,7 @@ namespace KmsLibraryCode
                 }
             });
 
-            foreach (var item in Centroids.Select((value, i) => ( value, i )))
+            foreach (var item in Centroids.Select((value, i) => (value, i)))
             {
                 Clusters.Add(new Cluster<T>(Centroids.ElementAt(item.i), labels.ElementAt(item.i)));
             }

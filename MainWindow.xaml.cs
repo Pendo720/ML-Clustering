@@ -26,8 +26,8 @@ namespace Clusterer
         List<Feature<Field>> _features;
         MLDataPipeline<Feature<Field>> _pipeline;
         KmsAlgorithm<Field> _kmsAlgorithm;
-        public List<PlotFeatures> PlotSettings{ get; set; }
-        
+        public List<PlotFeatures> PlotSettings { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -60,7 +60,7 @@ namespace Clusterer
             Point where = e.GetPosition(canvas);
             float x = (float)where.X, y = (float)where.Y;
             MapFromCanvas(ref x, ref y);
-            txtcoords.Content= $"{(float)x}, {(float)y}";
+            txtcoords.Content = $"{(float)x}, {(float)y}";
         }
         /// <summary>
         /// 
@@ -115,7 +115,7 @@ namespace Clusterer
             c.SelectionIndex = 2;
             strengthselection.ItemsSource = c.Options;
             strengthselection.SelectedIndex = c.SelectionIndex;
-            
+
             xselection.IsEnabled = enabled;
             yselection.IsEnabled = enabled;
             strengthselection.IsEnabled = enabled;
@@ -141,7 +141,7 @@ namespace Clusterer
 
             SolidColorBrush[] all = { Brushes.Red, Brushes.Green, Brushes.Blue };
 
-            foreach(var C in _kmsAlgorithm.Clusters.Select((k, i)=>(k, i)))
+            foreach (var C in _kmsAlgorithm.Clusters.Select((k, i) => (k, i)))
             {
                 DrawCentroid(C.k, all[C.i]);
             }
@@ -203,19 +203,19 @@ namespace Clusterer
         private void DrawFeature(Feature<Field> p, SolidColorBrush colour)
         {
             SolidColorBrush[] all = { Brushes.Red, Brushes.Green, Brushes.Blue };
-            if(_kmsAlgorithm != null)
-            foreach (var C in _kmsAlgorithm?
-                                .Clusters?
-                                .Select((k, i) => (k.Elements, i)))
-            {
-                colour = C.Elements.Contains(p)?all[C.i]:colour;
-            }
+            if (_kmsAlgorithm != null)
+                foreach (var C in _kmsAlgorithm?
+                                    .Clusters?
+                                    .Select((k, i) => (k.Elements, i)))
+                {
+                    colour = C.Elements.Contains(p) ? all[C.i] : colour;
+                }
 
             Line hLine = new Line(), vLine = new Line();
             float[] values = p.GetValues().ToArray();
             if (values.Length > 0)
             {
-                float x = values[xselection.SelectedIndex], 
+                float x = values[xselection.SelectedIndex],
                     y = values[yselection.SelectedIndex];
                 Point point = MapToCanvas(x, y);
                 hLine.Stroke = colour;
@@ -257,12 +257,12 @@ namespace Clusterer
                 Canvas.SetTop(circle, point.Y - _crossLength);
                 Canvas.SetLeft(circle, point.X - _crossLength);
                 canvas.Children.Add(circle);
-    
+
                 var txtBlock = new TextBlock();
                 txtBlock.Text = C.Label;
-                txtBlock.FontSize *= 2; 
-                Canvas.SetTop(txtBlock, point.Y - 2*_crossLength);
-                Canvas.SetLeft(txtBlock, point.X + 2*_crossLength);
+                txtBlock.FontSize *= 2;
+                Canvas.SetTop(txtBlock, point.Y - 2 * _crossLength);
+                Canvas.SetLeft(txtBlock, point.X + 2 * _crossLength);
                 canvas.Children.Add(txtBlock);
 
                 C.Elements.ForEach(e =>
@@ -292,8 +292,8 @@ namespace Clusterer
         /// <param name="y"></param>
         private Point MapToCanvas(float x, float y)
         {
-            x = x * _actualHeight +_xOffset;
-            y = y * _actualHeight;           
+            x = x * _actualHeight + _xOffset;
+            y = y * _actualHeight;
             return new Point(x, y);
         }
         /// <summary>
@@ -318,7 +318,7 @@ namespace Clusterer
         /// <param name="filePath"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        private bool ShowOpenDialog(ref string filePath, string filter = "CSV files (*.csv)|*.csv") 
+        private bool ShowOpenDialog(ref string filePath, string filter = "CSV files (*.csv)|*.csv")
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = _fileDirectory;
@@ -363,21 +363,19 @@ namespace Clusterer
             float x = (float)where.X, y = (float)where.Y;
             MapFromCanvas(ref x, ref y);
             txtcoords.Content = $"{(float)x}, {(float)y}";
-            if (HasCluster) {
+            if (HasCluster)
+            {
 
-                Feature<Field> f = new Feature<Field>();
-                foreach(var lab in PlotSettings.ToArray()[0].Options)
-                {
-                    f.Add(new Field(lab, 0f));
-                }
-                f.Fields.ToArray()[0].Value = x;
-                f.Fields.ToArray()[1].Value = y;
+                Feature<Field> f = _features.ToArray()[0];
                 List<string> labels = f.Fields.Select(d => d.Name).ToList();
                 var dialog = new Clustering.CrossValidatorDialog(labels);
-                if(true == dialog.ShowDialog())
+                if (true == dialog.ShowDialog())
                 {
-                    MessageBox.Show($"{(float)x}, {(float)y}", _kmsAlgorithm.Classify(f).Label);
-                }                
+                    f = new Feature<Field>();
+                    dialog.Fields.ForEach(k => f.Add(new Field(k.Label, k.Value)));
+                    string sLabel = _kmsAlgorithm.Classify(f).Label;
+                    MessageBox.Show($"f.ToString()", sLabel);
+                }
             }
         }
 

@@ -30,9 +30,10 @@
       
       <ListBox.ItemTemplate >
         <DataTemplate x:Name="dataTemplate">
-          <StackPanel Orientation="Horizontal" Margin="2, 2, 2, 0" x:Name="line">
-            <Label Content="{Binding Path=Label}" Width="180"/>            
-            <TextBox x:Name="ValueField" Width="120"/>
+          <StackPanel Orientation="Horizontal" Margin="2, 0, 2, 0" x:Name="line" VerticalAlignment="Center"
+                      HorizontalAlignment="Center">
+            <Label Content="{Binding Path=Label}" Width="120"/>            
+            <TextBox x:Name="ValueField" Width="80" TextAlignment="Center" VerticalContentAlignment="Center"/>
             
           </StackPanel>
         </DataTemplate>

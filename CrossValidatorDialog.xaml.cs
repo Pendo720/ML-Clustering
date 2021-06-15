@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Clustering
 {
@@ -10,10 +10,13 @@ namespace Clustering
     {
         public string Label { get; set; }
         public float Value { get; set; }
-        public FieldInfo(string sLabel)
+
+        public int Index { get; set; }
+        public FieldInfo(string sLabel, int index)
         {
             Label = sLabel;
             Value = 0f;
+            Index = index;
         }
     }
 
@@ -22,32 +25,51 @@ namespace Clustering
     /// </summary>
     public partial class CrossValidatorDialog : Window
     {
-        public FieldInfo Current { get; set; }
         public List<FieldInfo> Fields { get; set; }
 
         public CrossValidatorDialog(List<string> fields)
         {
             InitializeComponent();
-            Fields = fields.Select(s => new FieldInfo(s)).ToList();
+            Fields = fields.Select((s, i) => (s, i)).ToList().Select(p => new FieldInfo(p.s, p.i)).ToList();
             fieldlist.DataContext = Fields;
         }
 
         private void okbtn_Click(object sender, RoutedEventArgs e)
         {
-            var temp = fieldlist.Template;
-            var container = temp.LoadContent();
-            foreach (var lbi in fieldlist.Items)
+            Enumerable.Range(0, fieldlist.Items.Count).ToList().ForEach(i =>
             {
-                TextBox txtBox = (TextBox)temp.FindName("ValueField", fieldlist);
-                if (txtBox != null)
-                {
-                    FieldInfo c = new FieldInfo("Capture");
-                    c.Value = float.Parse(txtBox.Text);
-                }
-            }
-;
+                ListBoxItem myListBoxItem = (ListBoxItem)fieldlist.ItemContainerGenerator.ContainerFromItem(fieldlist.Items.CurrentItem);
+
+                // Getting the ContentPresenter of myListBoxItem
+                ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(myListBoxItem);
+
+                // Finding textBlock from the DataTemplate that is set on that ContentPresenter
+                DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
+                TextBox txtBox = (TextBox)myDataTemplate.FindName("ValueField", myContentPresenter);
+                Fields.ElementAt(i).Value = float.Parse(txtBox.Text);
+                fieldlist.Items.MoveCurrentToNext();
+            });
 
             DialogResult = true;
+        }
+        private childItem FindVisualChild<childItem>(DependencyObject obj)
+            where childItem : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is childItem)
+                {
+                    return (childItem)child;
+                }
+                else
+                {
+                    childItem childOfChild = FindVisualChild<childItem>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
         }
 
         private void cancelbtn_Click(object sender, RoutedEventArgs e)
@@ -55,10 +77,25 @@ namespace Clustering
             DialogResult = false;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e){
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
 
             fieldlist.DataContext = Fields;
+
         }
-       
-    }    
+
+        private void ValueField_TextChanged(object sender, TextChangedEventArgs e)
+        {
+        }
+
+        private void ValueField_TextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            string sTxt = e.Text;
+
+        }
+
+        private void ValueField_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+        }
+    }
 }
