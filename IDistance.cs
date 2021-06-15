@@ -8,4 +8,5 @@
     {
         float distanceTo(T other);
     }
+
 }
