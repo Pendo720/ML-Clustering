@@ -373,7 +373,11 @@ namespace Clusterer
                 f.Fields.ToArray()[0].Value = x;
                 f.Fields.ToArray()[1].Value = y;
 
-                MessageBox.Show($"{(float)x}, {(float)y}", _kmsAlgorithm.Classify(f).Label);
+                var dialog = new Clustering.CrossValidatorDialog(new List<string> { "Alpha", "Omega" });
+                if(true == dialog.ShowDialog())
+                {
+                    MessageBox.Show($"{(float)x}, {(float)y}", _kmsAlgorithm.Classify(f).Label);
+                }                
             }
         }
 
