@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace KmsLibrary
+namespace KmsLibraryCode
 {
     public sealed class Field
     {

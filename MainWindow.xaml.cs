@@ -1,4 +1,4 @@
-﻿using KmsLibrary;
+﻿using KmsLibraryCode;
 using Microsoft.Win32;
 using Serilog;
 using System;
@@ -19,7 +19,7 @@ namespace Clusterer
     {
         private readonly ILogger _logger;
         private readonly float _crossLength = 5;
-        private readonly string _fileDirectory = @"C:\Susu-ilo\Projects\Tracked-Git\Clusterer\Data\";
+        private readonly string _fileDirectory = @"C:\Susu-ilo\Projects\Tracked-Git\Clustering\Data\";
         private float _actualWidth, _actualHeight, _xOffset;
         public bool HasCluster { get; set; }
 

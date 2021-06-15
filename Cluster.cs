@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KmsLibrary
+namespace KmsLibraryCode
 {
     public sealed class Cluster<T>
     {

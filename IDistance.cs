@@ -1,4 +1,4 @@
-﻿namespace KmsLibrary
+﻿namespace KmsLibraryCode
 {
     /// <summary>
     ///     The contract for enabling the calculation of distances between features

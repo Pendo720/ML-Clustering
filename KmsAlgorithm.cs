@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace KmsLibrary
+namespace KmsLibraryCode
 {
     /// <summary>
     ///     The public api for running k-means clustering algorithm
