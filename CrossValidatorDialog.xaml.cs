@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -46,7 +47,10 @@ namespace Clustering
                 // Finding textBlock from the DataTemplate that is set on that ContentPresenter
                 DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
                 TextBox txtBox = (TextBox)myDataTemplate.FindName("ValueField", myContentPresenter);
-                Fields.ElementAt(i).Value = float.Parse(txtBox.Text);
+                string valueTxt = txtBox.Text;
+                if(valueTxt != string.Empty) { 
+                    Fields.ElementAt(i).Value = float.Parse(valueTxt);
+                }
                 fieldlist.Items.MoveCurrentToNext();
             });
 
@@ -84,18 +88,12 @@ namespace Clustering
 
         }
 
-        private void ValueField_TextChanged(object sender, TextChangedEventArgs e)
-        {
-        }
-
         private void ValueField_TextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
-            string sTxt = e.Text;
-
+            //Regex regex = new Regex("[^0-9]+");
+            //e.Handled = regex.IsMatch(e.Text);
+            e.Handled = !char.IsDigit(e.Text.Last()) && (e.Text.Select(c=>c=='.').ToList().Count == 1);
         }
 
-        private void ValueField_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-        }
     }
 }

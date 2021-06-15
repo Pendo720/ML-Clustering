@@ -374,7 +374,7 @@ namespace Clusterer
                     f = new Feature<Field>();
                     dialog.Fields.ForEach(k => f.Add(new Field(k.Label, k.Value)));
                     string sLabel = _kmsAlgorithm.Classify(f).Label;
-                    MessageBox.Show($"f.ToString()", sLabel);
+                    MessageBox.Show(f.ToString(), sLabel);
                 }
             }
         }
