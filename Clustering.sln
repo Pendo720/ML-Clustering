@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31402.337
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clustering", "Clustering.csproj", "{E64BEDAA-348B-49F9-91A0-20D80B671838}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6107B6BE-3362-443F-B53B-B37C5B7A350A} = {6107B6BE-3362-443F-B53B-B37C5B7A350A}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KmsLibraryTests", "..\KmeansTests\KmsLibraryTests.csproj", "{6107B6BE-3362-443F-B53B-B37C5B7A350A}"
 EndProject
