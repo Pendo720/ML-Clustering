@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,20 +22,31 @@ namespace Clustering
     /// </summary>
     public partial class CrossValidatorDialog : Window
     {
-        
+        public FieldInfo Current { get; set; }
         public List<FieldInfo> Fields { get; set; }
 
         public CrossValidatorDialog(List<string> fields)
         {
             InitializeComponent();
-            Fields = new List<FieldInfo>();
-            fields.ForEach(s => Fields.Add(new FieldInfo(s)));
+            Fields = fields.Select(s => new FieldInfo(s)).ToList();
             fieldlist.DataContext = Fields;
         }
 
-
         private void okbtn_Click(object sender, RoutedEventArgs e)
         {
+            var temp = fieldlist.Template;
+            var container = temp.LoadContent();
+            foreach (var lbi in fieldlist.Items)
+            {
+                TextBox txtBox = (TextBox)temp.FindName("ValueField", fieldlist);
+                if (txtBox != null)
+                {
+                    FieldInfo c = new FieldInfo("Capture");
+                    c.Value = float.Parse(txtBox.Text);
+                }
+            }
+;
+
             DialogResult = true;
         }
 
@@ -43,13 +55,10 @@ namespace Clustering
             DialogResult = false;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e) => fieldlist.DataContext = Fields;
+        private void Window_Loaded(object sender, RoutedEventArgs e){
 
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            //fieldValue.Text = (float)(new Random().NextDouble());
-
+            fieldlist.DataContext = Fields;
         }
+       
     }    
 }

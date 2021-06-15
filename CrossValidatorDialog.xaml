@@ -9,6 +9,7 @@
         Height="349"
         Width="360"
         ResizeMode="NoResize"
+        Icon="/icomplex.ico"
         WindowStartupLocation="CenterScreen">
   <Grid Margin="10,10,10,10">
     <Grid.RowDefinitions>
@@ -17,9 +18,8 @@
       <RowDefinition Height="3*" />
       <RowDefinition Height="1*" />
     </Grid.RowDefinitions>
-    <TextBlock Name="Info"
-               Text="Set up the values for a feature to cross validate"
-               TextWrapping="Wrap" />
+    <TextBlock Text="Set values for a feature to validate"
+               TextAlignment="Center"/>
 
     <ListBox Name="fieldlist"
              ItemsSource="{Binding}"
@@ -28,16 +28,12 @@
              Width="328"
              Grid.Row="1">
       
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Orientation="Horizontal" Margin="2, 6, 2, 0">
-            <Label Content="{Binding Path=Label}" MinWidth="120"/>
+      <ListBox.ItemTemplate >
+        <DataTemplate x:Name="dataTemplate">
+          <StackPanel Orientation="Horizontal" Margin="2, 2, 2, 0" x:Name="line">
+            <Label Content="{Binding Path=Label}" Width="180"/>            
+            <TextBox x:Name="ValueField" Width="120"/>
             
-            <Label x:Name="fieldValue"
-                   MinWidth="80"
-                   Content="{Binding Path=Value}" />
-            
-            <Button Content=" Set " Click="Button_Click" MinWidth="80"/>
           </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
