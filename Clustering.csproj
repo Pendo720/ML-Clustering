@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\KmeansTests\KmsLibraryTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="icomplex.ico" />
   </ItemGroup>
 
