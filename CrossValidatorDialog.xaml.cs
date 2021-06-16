@@ -12,12 +12,10 @@ namespace Clustering
         public string Label { get; set; }
         public float Value { get; set; }
 
-        public int Index { get; set; }
-        public FieldInfo(string sLabel, int index)
+        public FieldInfo(string sLabel)
         {
             Label = sLabel;
             Value = 0f;
-            Index = index;
         }
     }
 
@@ -31,7 +29,7 @@ namespace Clustering
         public CrossValidatorDialog(List<string> fields)
         {
             InitializeComponent();
-            Fields = fields.Select((s, i) => (s, i)).ToList().Select(p => new FieldInfo(p.s, p.i)).ToList();
+            Fields = fields.Select(p => new FieldInfo(p)).ToList();
             fieldlist.DataContext = Fields;
         }
 
@@ -48,7 +46,8 @@ namespace Clustering
                 DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
                 TextBox txtBox = (TextBox)myDataTemplate.FindName("ValueField", myContentPresenter);
                 string valueTxt = txtBox.Text;
-                if(valueTxt != string.Empty) { 
+                if (valueTxt != string.Empty)
+                {
                     Fields.ElementAt(i).Value = float.Parse(valueTxt);
                 }
                 fieldlist.Items.MoveCurrentToNext();
@@ -83,17 +82,13 @@ namespace Clustering
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             fieldlist.DataContext = Fields;
-
         }
 
         private void ValueField_TextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
-            //Regex regex = new Regex("[^0-9]+");
-            //e.Handled = regex.IsMatch(e.Text);
-            e.Handled = !char.IsDigit(e.Text.Last()) && (e.Text.Select(c=>c=='.').ToList().Count == 1);
+            Regex regex = new Regex("[^0-9]+\\.");
+            e.Handled = regex.IsMatch(e.Text);
         }
-
     }
 }

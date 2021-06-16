@@ -28,12 +28,25 @@ namespace Clusterer
         KmsAlgorithm<Field> _kmsAlgorithm;
         public List<PlotFeatures> PlotSettings { get; set; }
 
+        //public class FieldInfo
+        //{
+        //    public string Label { get; set; }
+        //    public float Value { get; set; }
+        //    public FieldInfo(string sLabel)
+        //    {
+        //        Label = sLabel;
+        //        Value = 0f;
+        //    }
+        //}
+
         public MainWindow()
         {
             InitializeComponent();
             _logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
-                .WriteTo.File(path: _fileDirectory + "runlog", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
+                .WriteTo.File(path: _fileDirectory + "runlog.log", 
+                            restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information, 
+                            rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
                 .CreateLogger();
             _logger.Information("Application started");
         }
@@ -46,7 +59,6 @@ namespace Clusterer
             _actualHeight = (float)canvas.ActualHeight;
             _xOffset = (_actualWidth - _actualHeight) / 2;
             canvas.Background = Brushes.White;
-
             HasCluster = false;
         }
 
@@ -85,6 +97,7 @@ namespace Clusterer
                 _pipeline.Training.ForEach(p => DrawFeature(p, Brushes.Blue));
                 var pathBits = filePath.Split('\\');
                 txtfileName.Content = pathBits[pathBits.Length - 1];
+                validateBtn.Visibility = Visibility.Hidden;
             }
         }
 
@@ -147,6 +160,7 @@ namespace Clusterer
             }
             clusterList.DataContext = _kmsAlgorithm.Clusters;
             HasCluster = true;
+            validateBtn.Visibility = Visibility.Visible;
         }
         /// <summary>
         /// 
@@ -192,6 +206,7 @@ namespace Clusterer
                 exportClusters.IsEnabled = false;
                 clusterList.DataContext = _kmsAlgorithm.Clusters;
                 HasCluster = true;
+                validateBtn.Visibility = Visibility.Visible;
             }
         }
         #region drawing
@@ -357,28 +372,19 @@ namespace Clusterer
             }
         }
 
-        private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        private void validateBtn_Click(object sender, RoutedEventArgs e)
         {
-            Point where = e.GetPosition(canvas);
-            float x = (float)where.X, y = (float)where.Y;
-            MapFromCanvas(ref x, ref y);
-            txtcoords.Content = $"{(float)x}, {(float)y}";
-            if (HasCluster)
+            Feature<Field> f = _features.ToArray()[0];
+            List<string> labels = f.Fields.Select(d => d.Name).ToList();
+            var dialog = new Clustering.CrossValidatorDialog(labels);
+            if (true == dialog.ShowDialog())
             {
-
-                Feature<Field> f = _features.ToArray()[0];
-                List<string> labels = f.Fields.Select(d => d.Name).ToList();
-                var dialog = new Clustering.CrossValidatorDialog(labels);
-                if (true == dialog.ShowDialog())
-                {
-                    f = new Feature<Field>();
-                    dialog.Fields.ForEach(k => f.Add(new Field(k.Label, k.Value)));
-                    string sLabel = _kmsAlgorithm.Classify(f).Label;
-                    MessageBox.Show(f.ToString(), sLabel);
-                }
+                f = new Feature<Field>();
+                dialog.Fields.ForEach(k => f.Add(new Field(k.Label, k.Value)));
+                string sLabel = _kmsAlgorithm.Classify(f).Label;
+                MessageBox.Show(f.ToString(), sLabel);
             }
         }
-
 
         /// <summary>
         /// 

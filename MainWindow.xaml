@@ -61,8 +61,7 @@
     <Canvas x:Name="canvas"
           Grid.ColumnSpan="1"
           Grid.Row="0"
-          Grid.Column="0"
-          MouseDown="Canvas_MouseDown" />
+          Grid.Column="0"/>
     
     <DockPanel Grid.Column="1"
                Grid.Row="0"
@@ -215,7 +214,18 @@
               </ListView.View>
             </ListView>
             </GroupBox>
-          </StackPanel>
+
+              <Button Content="Validate"
+                      x:Name="validateBtn"
+                      Visibility="Hidden"
+                      Grid.Row="2"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Top"
+                      Width="100"
+                      Height="35"
+                      Margin="10" 
+                      Click="validateBtn_Click"/>
+            </StackPanel>
           
         </GroupBox>
       </Grid>
