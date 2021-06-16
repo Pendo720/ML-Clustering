@@ -236,16 +236,10 @@
                Grid.Row="2"
                Grid.ColumnSpan="2"
                MaxHeight="32">
-
-      <StatusBarItem Content="0,0"
-                     MaxHeight="28"
-                     Name="txtcoords"
-                     HorizontalAlignment="Left"
-                     VerticalContentAlignment="Center" />
       <StatusBarItem Content="File"
                      MaxHeight="28"
                      Name="txtfileName"
-                     HorizontalAlignment="Center"
+                     HorizontalAlignment="Left"
                      VerticalContentAlignment="Center" />
     </StatusBar>
 

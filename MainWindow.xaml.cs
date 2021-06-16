@@ -6,20 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace Clusterer
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private readonly ILogger _logger;
         private readonly float _crossLength = 5;
-        private readonly string _fileDirectory = @"C:\Susu-ilo\Projects\Tracked-Git\Clustering\Data\";
+        private readonly string _fileDirectory = Environment.CurrentDirectory;
         private float _actualWidth, _actualHeight, _xOffset;
         public bool HasCluster { get; set; }
 
@@ -28,27 +24,16 @@ namespace Clusterer
         KmsAlgorithm<Field> _kmsAlgorithm;
         public List<PlotFeatures> PlotSettings { get; set; }
 
-        //public class FieldInfo
-        //{
-        //    public string Label { get; set; }
-        //    public float Value { get; set; }
-        //    public FieldInfo(string sLabel)
-        //    {
-        //        Label = sLabel;
-        //        Value = 0f;
-        //    }
-        //}
-
         public MainWindow()
         {
             InitializeComponent();
             _logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .WriteTo.File(path: _fileDirectory + "runlog.log", 
-                            restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information, 
+                            restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning, 
                             rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
                 .CreateLogger();
-            _logger.Information("Application started");
+            _logger.Warning("Application started");
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -62,23 +47,6 @@ namespace Clusterer
             HasCluster = false;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MouseLocation(object sender, MouseEventArgs e)
-        {
-            Point where = e.GetPosition(canvas);
-            float x = (float)where.X, y = (float)where.Y;
-            MapFromCanvas(ref x, ref y);
-            txtcoords.Content = $"{(float)x}, {(float)y}";
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void LoadData_Click(object sender, RoutedEventArgs e)
         {
             var filePath = string.Empty;
@@ -134,14 +102,9 @@ namespace Clusterer
             strengthselection.IsEnabled = enabled;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void RunClustering_Click(object sender, RoutedEventArgs e)
         {
-            _kmsAlgorithm = new KmsAlgorithm<Field>(_pipeline.Training, new List<String>() { "Jaguars", "Lions", "Monkeys" });
+            _kmsAlgorithm = new KmsAlgorithm<Field>(_pipeline.Training, new List<String>() { "Apple", "Orange", "Kiwi" });
             if (canvas.Children.Count != 0)
             {
                 canvas.Children.Clear();
@@ -162,11 +125,7 @@ namespace Clusterer
             HasCluster = true;
             validateBtn.Visibility = Visibility.Visible;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private async void ExportClusters_Click(object sender, RoutedEventArgs e)
         {
             _logger.Information("Implement exportClusters()...");
@@ -176,11 +135,7 @@ namespace Clusterer
                 await _kmsAlgorithm.ExportClusters(filePath);
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private void ImportClusters_Click(object sender, RoutedEventArgs e)
         {
             var filePath = string.Empty;
@@ -210,22 +165,19 @@ namespace Clusterer
             }
         }
         #region drawing
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="p"></param>
-        /// <param name="colour"></param>
+
         private void DrawFeature(Feature<Field> p, SolidColorBrush colour)
         {
             SolidColorBrush[] all = { Brushes.Red, Brushes.Green, Brushes.Blue };
-            if (_kmsAlgorithm != null)
+            if (_kmsAlgorithm != null) { 
+            
                 foreach (var C in _kmsAlgorithm?
                                     .Clusters?
                                     .Select((k, i) => (k.Elements, i)))
                 {
                     colour = C.Elements.Contains(p) ? all[C.i] : colour;
                 }
-
+            }
             Line hLine = new Line(), vLine = new Line();
             float[] values = p.GetValues().ToArray();
             if (values.Length > 0)
@@ -250,11 +202,7 @@ namespace Clusterer
                 canvas.Children.Add(vLine);
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="C"></param>
-        /// <param name="colour"></param>
+
         private void DrawCentroid(Cluster<Field> C, SolidColorBrush colour)
         {
             float[] values = C.Centroid.GetValues().ToArray();
@@ -300,39 +248,16 @@ namespace Clusterer
             }
         }
         #endregion
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+
         private Point MapToCanvas(float x, float y)
         {
             x = x * _actualHeight + _xOffset;
             y = y * _actualHeight;
             return new Point(x, y);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        private void MapFromCanvas(ref float x, ref float y)
-        {
-            x = (x - _xOffset) / _actualHeight;
-            y = y / _actualHeight;
-        }
+        
+        private void Exit_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="filter"></param>
-        /// <returns></returns>
         private bool ShowOpenDialog(ref string filePath, string filter = "CSV files (*.csv)|*.csv")
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -386,12 +311,6 @@ namespace Clusterer
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="filter"></param>
-        /// <returns></returns>
         private bool ShowSaveDialog(ref string filePath, string filter = "JSON files (*.json)|*.json")
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();

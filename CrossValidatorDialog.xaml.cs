@@ -19,9 +19,7 @@ namespace Clustering
         }
     }
 
-    /// <summary>
-    /// Interaction logic for CrossValidatorDialog.xaml
-    /// </summary>
+
     public partial class CrossValidatorDialog : Window
     {
         public List<FieldInfo> Fields { get; set; }
