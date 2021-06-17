@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace KmsLibraryCode
 {
-
     public class MLDataPipeline<T>
     {
         public ImmutableList<T> Data { get; }
@@ -30,12 +29,7 @@ namespace KmsLibraryCode
             Testing = Data.Skip(train).Take(other).ToList();
             CrossValidation = Data.Skip(train + other).ToList();
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="times"></param>
-        /// <returns></returns>
+
         /*public static List<T> ShuffleAndDuplicate(List<T> items, int times)
         {
             items.OrderBy(f => new Random().Next());

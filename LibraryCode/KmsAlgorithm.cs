@@ -20,11 +20,7 @@ namespace KmsLibraryCode
         public List<Cluster<T>> Clusters { get; set; }
         public List<Feature<T>> Centroids { get; set; }
         public int NumOfClusters { get; }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="features"></param>
-        /// <param name="labels"></param>
+
         public KmsAlgorithm(List<Feature<T>> features, List<String> labels)
         {
             Clusters = new List<Cluster<T>>();
@@ -32,11 +28,7 @@ namespace KmsLibraryCode
             NumOfClusters = labels.Count;
             initCentroids(labels);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="features"></param>
-        /// <param name="centroids"></param>
+
         public KmsAlgorithm(List<Feature<T>> features, List<Feature<T>> centroids)
         {
             Clusters = new List<Cluster<T>>();
@@ -50,10 +42,6 @@ namespace KmsLibraryCode
         {
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="labels"></param>
         private void initCentroids(List<String> labels)
         {
             Console.WriteLine("Randomly initialised centroids...");
@@ -75,9 +63,7 @@ namespace KmsLibraryCode
 
             initialAssignment();
         }
-        /// <summary>
-        /// 
-        /// </summary>
+
         private void initialAssignment()
         {
             Features.ForEach(f => Clusters
@@ -86,9 +72,7 @@ namespace KmsLibraryCode
 
             Clusters.ForEach(r => r.UpdateFieldRanges());
         }
-        /// <summary>
-        /// 
-        /// </summary>
+
         public void runIterations()
         {
             Counter += 1;
@@ -143,21 +127,14 @@ namespace KmsLibraryCode
             /*            ExportClusters("csvexport");
                         LoadClusters("csvexport.csv");*/
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+
         public override string ToString()
         {
             string toReturn = string.Empty;
             Centroids.ToList().ForEach(c => toReturn += c.ToString());
             return toReturn;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="feature"></param>
-        /// <returns></returns>
+
         public Cluster<T> Classify(Feature<T> feature)
         {
             Cluster<T> toReturn = null;
@@ -172,10 +149,7 @@ namespace KmsLibraryCode
 
             return toReturn;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="csvfile"></param>
+
         public async Task ExportClusters(string csvfile)
         {
             // Create the file, or overwrite if the file exists.
@@ -185,10 +159,7 @@ namespace KmsLibraryCode
                 fs.Write(info, 0, info.Length);
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="csvfile"></param>
+
         public Task ImportClusters(string csvfile)
         {
             using StreamReader sr = File.OpenText(csvfile);
