@@ -6,10 +6,7 @@ using System.Linq;
 
 namespace KmsLibraryCode
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
+
     public class MLDataPipeline<T>
     {
         public ImmutableList<T> Data { get; }
@@ -17,21 +14,14 @@ namespace KmsLibraryCode
         public List<T> Testing { get; set; }
         public List<T> CrossValidation { get; set; }
 
-        /// <summary>
-        ///     Constructs a pipeline for holding and splitting model data 
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="trainRatio"></param>
         public MLDataPipeline(List<T> data, float trainRatio = 0.6f)
         {
             Data = data.ToImmutableList();
             Split(trainRatio);
         }
-        /// <summary>
-        ///     Splits the data into training, testing and cross validation sets
-        ///     The default splitting ratio is 60%, 20% and 20%
-        /// </summary>
-        /// <param name="training"></param>
+        
+        //     Splits the data into training, testing and cross validation sets
+        //     The default splitting ratio is 60%, 20% and 20%
         private void Split(float training = 0.6f)
         {
             int train = (int)(training * Data.Count);
@@ -56,11 +46,7 @@ namespace KmsLibraryCode
             return items;
         }*/
 
-        /// <summary>
-        ///     Normalise feature in readiness for processing
-        /// </summary>
-        /// <param name="items"></param>
-        /// <returns></returns>
+        // Normalise feature in readiness for processing
         public static List<Feature<Field>> Normalise(List<Feature<Field>> items)
         {
             if (items != null && items.Count > 1)
@@ -92,37 +78,30 @@ namespace KmsLibraryCode
 
             return items;
         }
-        /// <summary>
-        ///     Imports input data from a csv file
-        /// </summary>
-        /// <param name="csvfile"></param>
-        /// <returns>
-        ///     List of features contained in the the file with each line 
-        ///     corresponding to an item
-        /// </returns>
-        public static List<Feature<Field>> ImportCSV(string csvfile)
+
+        // Imports input data from a csv file
+        // returns List of features contained in the the file with each line 
+        // corresponding to an item
+        public static List<Feature<Field>> ImportCSV(string csvfile, ref List<string> CentroidTags)
         {
             var items = new List<Feature<Field>>();
             try
             {
                 if (File.Exists(csvfile))
                 {
-
                     using (StreamReader sr = File.OpenText(csvfile))
                     {
                         string s = string.Empty;
-                        string[] sLabels = sr.ReadLine().Split(',');
+                        CentroidTags = sr.ReadLine().Split(',').ToList();
+                        string[] sFields = sr.ReadLine().Split(',');
                         while ((s = sr.ReadLine()) != null)
                         {
                             Feature<Field> feature = new Feature<Field>();
                             string[] values = s.Split(',');
-                            for (int i = 0; i < sLabels.Length; i++)
-                            {
-                                //float fNorm = (float)(1f / (1 + Math.Exp(-float.Parse(values[i]))));
-                                float fNorm = float.Parse(values[i]);
-                                feature.Add(new Field(sLabels[i], fNorm));
-                            }
 
+                            sFields.Select((f, i) => (f, i))
+                                .ToList()
+                                .ForEach(c => feature.Add(new Field(sFields[c.i], float.Parse(values[c.i]))));
                             items.Add(feature);
                         }
                     }

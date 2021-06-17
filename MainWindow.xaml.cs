@@ -17,6 +17,7 @@ namespace Clusterer
         private readonly float _crossLength = 5;
         private readonly string _fileDirectory = Environment.CurrentDirectory;
         private float _actualWidth, _actualHeight, _xOffset;
+        private List<string> _categories;
         public bool HasCluster { get; set; }
 
         List<Feature<Field>> _features;
@@ -53,7 +54,8 @@ namespace Clusterer
             if (ShowOpenDialog(ref filePath) && filePath != string.Empty)
             {
                 _kmsAlgorithm?.Clusters.Clear();
-                _features = MLDataPipeline<Feature<Field>>.ImportCSV(filePath);
+                _categories = new List<string>();
+                _features = MLDataPipeline<Feature<Field>>.ImportCSV(filePath, ref _categories);
                 PlotConfiguration(_features, true);
 
                 _pipeline = new MLDataPipeline<Feature<Field>>(_features);
@@ -104,7 +106,7 @@ namespace Clusterer
 
         private void RunClustering_Click(object sender, RoutedEventArgs e)
         {
-            _kmsAlgorithm = new KmsAlgorithm<Field>(_pipeline.Training, new List<String>() { "Apple", "Orange", "Kiwi" });
+            _kmsAlgorithm = new KmsAlgorithm<Field>(_pipeline.Training, _categories);
             if (canvas.Children.Count != 0)
             {
                 canvas.Children.Clear();
@@ -168,14 +170,14 @@ namespace Clusterer
 
         private void DrawFeature(Feature<Field> p, SolidColorBrush colour)
         {
-            SolidColorBrush[] all = { Brushes.Red, Brushes.Green, Brushes.Blue };
+            SolidColorBrush[] all = { Brushes.Red, Brushes.Green, Brushes.Blue, Brushes.Orange, Brushes.DarkCyan };
             if (_kmsAlgorithm != null) { 
             
                 foreach (var C in _kmsAlgorithm?
                                     .Clusters?
-                                    .Select((k, i) => (k.Elements, i)))
+                                    .Select((k, i) => (k, i)))
                 {
-                    colour = C.Elements.Contains(p) ? all[C.i] : colour;
+                    colour = C.k.Elements.Contains(p) ? all[C.i] : colour;
                 }
             }
             Line hLine = new Line(), vLine = new Line();

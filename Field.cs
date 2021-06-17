@@ -56,7 +56,7 @@ namespace KmsLibraryCode
         public float Normalise(float fmin, float fmax)
         {
             float f = Value - fmin;
-            Value = (float)((double)f / fmax);
+            Value = (float)( f / fmax);
             return Value;
         }
     }
